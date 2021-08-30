@@ -1,15 +1,15 @@
 import styled from 'styled-components';
 
 export interface TextProps {
-    color: string;
-    fontSize: number;
-    textAlign?: string;
+  color: string;
+  fontSize: number;
+  textAlign?: string;
 }
 
 const defaultTextProps: Partial<TextProps> = {
-    color: 'red',
-    fontSize: 12,
-    textAlign: 'center',
+  color: 'yellow',
+  fontSize: 12,
+  textAlign: 'center',
 };
 
 const TextStyled = styled.p<TextProps>`

@@ -1,23 +1,26 @@
 import styled from 'styled-components';
 
 export interface ButtonProps {
-    color: string;
-    background?: string;
+  onClick: any;
+  background: string;
+  children?: any;
 }
 
 const defaultButtonProps: Partial<ButtonProps> = {
-    color: 'red',
-    background: 'red',
+  background: 'yellow',
+  onClick: () => console.log('pressed')
 };
+
 
 const ButtonStyled = styled.button<ButtonProps>`
   background: ${(props) => props.background || 'white'};
-  color: ${(props) => props.color || 'white'};
   width: 200px;
   height: 50px;
   margin: 1em;
   border-radius: 50px;
 `;
-export const Button: React.FC<ButtonProps> = (props) => <ButtonStyled {...props} />;
+export const Button: React.FC<ButtonProps> = (props) => <ButtonStyled {...props}>{props.children}</ButtonStyled>;
 
 ButtonStyled.defaultProps = defaultButtonProps;
+
+export default ButtonStyled;

@@ -1,9 +1,13 @@
-import React, { HTMLAttributes, useState } from 'react';
+import React, { HTMLAttributes, useEffect, useState } from 'react';
 import { useStartTranslations } from './StartScreen.translations';
 import styled, { css } from 'styled-components';
 import { Divider } from '../../Components/Divider';
 import { Text } from '../../Components/Text';
 import { Button } from '../../Components/Button';
+
+import { MdDone, MdClear, MdAdd } from "react-icons/md";
+
+import { useFetch } from '../../hooks/useFetch';
 
 const MainLayout = styled.div`
   display: flex;
@@ -40,9 +44,12 @@ const Element = styled.div<ElementProps>`
 `;
 
 const Photo = styled.div`
+display: flex;
   width: 80%;
   height: 80%;
-  background-color: red;
+  background-color: #d9d9d9;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Carousel = styled.div`
@@ -54,7 +61,9 @@ const Carousel = styled.div`
 export const StartScreen = () => {
 	const translations = useStartTranslations();
 
-	const [buttons, setButtons] = useState<boolean>(true);
+	const [{ response, isLoading, error }, setFetch, refetch] = useFetch();
+
+	console.log('the responses and errors', response, isLoading, error)
 
 	return (
 		<MainLayout>
@@ -77,16 +86,38 @@ export const StartScreen = () => {
 				<Divider />
 
 				<Element flex={5}>
-					<Photo />
+					<Photo
+						onClick={() => {
+							setFetch(`https://api.unsplash.com/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`)
+						}}
+					>
+						{isLoading ?
+							null
+							:
+							<MdAdd style={{ color: '#808080', fontSize: 100 }} />
+						}
+
+					</Photo>
+
 				</Element>
 
 				<Divider />
 
 				<Element flex={2}>
-					{buttons ? (
+					{response?.urls ? (
 						<>
-							<Button color={'grey'} />
-							<Button color={'#004CFC'} />
+							<Button
+								onClick={() => setFetch(`https://api.unsplash.com/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`)}
+								background='grey'
+							>
+								<MdClear style={{ color: 'white', fontSize: 30 }} />
+							</Button>
+
+							<Button
+								onClick={() => console.log('cscxc')}
+								background='#004CFC'>
+								<MdDone style={{ color: 'white', fontSize: 30 }} />
+							</Button>
 						</>
 					) : (
 						<Text color='grey' fontSize={12}>
