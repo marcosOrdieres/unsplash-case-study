@@ -106,11 +106,16 @@ export const StartScreen = () => {
 				<Element flex={2}>
 					{response?.urls ? (
 						<>
-							<Button background='grey'>
+							<Button
+								onClick={() => setFetch(`https://api.unsplash.com/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`)}
+								background='grey'
+							>
 								<MdClear style={{ color: 'white', fontSize: 30 }} />
 							</Button>
 
-							<Button background='#004CFC'>
+							<Button
+								onClick={() => console.log('cscxc')}
+								background='#004CFC'>
 								<MdDone style={{ color: 'white', fontSize: 30 }} />
 							</Button>
 						</>

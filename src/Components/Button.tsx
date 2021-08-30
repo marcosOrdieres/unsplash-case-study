@@ -1,12 +1,14 @@
 import styled from 'styled-components';
 
 export interface ButtonProps {
+  onClick: any;
   background: string;
   children?: any;
 }
 
 const defaultButtonProps: Partial<ButtonProps> = {
   background: 'yellow',
+  onClick: () => console.log('pressed')
 };
 
 
