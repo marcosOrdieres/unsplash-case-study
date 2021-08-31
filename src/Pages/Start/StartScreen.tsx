@@ -1,58 +1,20 @@
-import React, { HTMLAttributes, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStartTranslations } from './StartScreen.translations';
-import styled, { css } from 'styled-components';
-import { Divider } from '../../Components/Divider';
-import { Text } from '../../Components/Text';
-import { Button } from '../../Components/Button';
-import { ImageCarousel } from '../../Components/ImageCarousel';
-
+import styled from 'styled-components';
 import { MdDone, MdClear, MdAdd } from 'react-icons/md';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { GlobalState } from '../../reducers/imageReducer';
 import { useFetch } from '../../hooks/useFetch';
 
-const MainLayout = styled.div`
-  display: flex;
-  width: 100vw;
-  height: 100vh;
-  background-color: #004cfc;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 80vw;
-  height: 80vh;
-  background-color: white;
-  border-width: 1px;
-  border-radius: 10px;
-`;
-
-export interface ElementProps extends HTMLAttributes<HTMLButtonElement> {
-	flex?: number;
-	flexDirection?: string;
-	color?: string;
-	justifyContent?: string;
-}
-
-const Element = styled.div<ElementProps>`
-  display: flex;
-  flex: ${(props) => props.flex};
-  flex-direction: ${(props) => props.flexDirection};
-  background-color: ${(props) => props.color};
-  align-items: center;
-  justify-content: ${(props) => props.justifyContent || 'center'}; ;
-`;
-
-const Photo = styled.div`
-  display: flex;
-  width: 80%;
-  height: 80%;
-  background-color: #d9d9d9;
-  align-items: center;
-  justify-content: center;
-`;
+import { ImageCarousel } from '../../Components/ImageCarousel';
+import MainLayout from '../../Components/MainLayout';
+import Container from '../../Components/Container';
+import Section from '../../Components/Section';
+import Divider from '../../Components/Divider';
+import MainImageContainer from '../../Components/MainImageContainer';
+import Button from '../../Components/Button';
+import Text from '../../Components/Text';
 
 const Image = styled.img`
   width: 100%;
@@ -63,51 +25,56 @@ const Image = styled.img`
   margin: 0;
 `;
 
-const rejected: any[] | [] = [];
-const approved: any[] | [] = [];
-
 export const StartScreen = () => {
 	const translations = useStartTranslations();
 
+	const approved = useSelector((state: GlobalState) => state.isImage.approved);
+	const rejected = useSelector((state: GlobalState) => state.isImage.rejected);
+
 	const [{ response, isLoading, error }, setFetch, refetch] = useFetch();
 
-	const imageIsRejected = rejected?.some((value) => response?.id === value.id);
+
+	console.log(response, isLoading, error)
+
+	const dispatch = useDispatch();
+
+	const imageIsRejected = rejected?.some(
+		(value: any) => response?.id === value.id
+	);
 
 	return (
 		<MainLayout>
 			<Container>
-				<Element
-					flex={1}
-					justifyContent='flex-start'
-					style={{ paddingLeft: '10%' }}
-				>
+				<Section flex={1} justifyContent='flex-start' paddingLeft='10%'>
 					<Text color='#004CFC' fontSize={18} text-align='left'>
 						{translations.mainTitle.toUpperCase()}
 					</Text>
-				</Element>
+				</Section>
 
 				<Divider width={'100%'} />
 
-				<Element
+				<Section
 					flex={2}
 					flexDirection='column'
-					style={{ alignItems: 'flex-start', paddingLeft: '10%' }}
+					paddingLeft='10%'
+					alignItems='flex-start'
 				>
 					<Text color='#004CFC' fontSize={18}>
 						{`${translations.approvedImages.toUpperCase()} (${approved ? approved.length : '0'
 							})`}
 					</Text>
 
-					<ImageCarousel data={approved} />
-				</Element>
+					<ImageCarousel />
+				</Section>
 
 				<Divider />
 
-				<Element flex={5}>
-					<Photo
-						onClick={() => {
-							setFetch(
-								`https://api.unsplash.com/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`
+				<Section flex={5}>
+					<MainImageContainer
+						backgroundColor='#d9d9d9'
+						onClick={async () => {
+							await setFetch(
+								`${process.env.REACT_APP_UNSPLASH_URL}/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`
 							);
 						}}
 					>
@@ -116,26 +83,45 @@ export const StartScreen = () => {
 						) : (
 							<MdAdd style={{ color: '#808080', fontSize: 100 }} />
 						)}
-					</Photo>
-				</Element>
+
+						{error && (
+							<Text color='red' fontSize={18}>
+								{error?.toString()}
+							</Text>
+						)}
+					</MainImageContainer>
+				</Section>
 
 				<Divider />
 
-				<Element flex={2}>
+				<Section flex={2}>
 					{response?.urls && !imageIsRejected ? (
 						<>
 							<Button
-								onClick={() =>
-									setFetch(
-										`https://api.unsplash.com/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`
-									)
-								}
+								onClick={async () => {
+									dispatch({
+										type: 'REJECT_IMAGE',
+										rejected: { id: response?.id, url: response?.urls?.thumb },
+									});
+
+									await setFetch(
+										`${process.env.REACT_APP_UNSPLASH_URL}/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`
+									);
+								}}
 								background='grey'
 							>
 								<MdClear style={{ color: 'white', fontSize: 30 }} />
 							</Button>
 
-							<Button onClick={() => console.log('click done')} background='#004CFC'>
+							<Button
+								onClick={() => {
+									dispatch({
+										type: 'APPROVE_IMAGE',
+										approved: { id: response?.id, url: response?.urls?.thumb },
+									});
+								}}
+								background='#004CFC'
+							>
 								<MdDone style={{ color: 'white', fontSize: 30 }} />
 							</Button>
 						</>
@@ -144,7 +130,7 @@ export const StartScreen = () => {
 							{translations.clickPlus}
 						</Text>
 					)}
-				</Element>
+				</Section>
 			</Container>
 		</MainLayout>
 	);
