@@ -4,8 +4,9 @@ import styled, { css } from 'styled-components';
 import { Divider } from '../../Components/Divider';
 import { Text } from '../../Components/Text';
 import { Button } from '../../Components/Button';
+import { ImageCarousel } from '../../Components/ImageCarousel';
 
-import { MdDone, MdClear, MdAdd } from "react-icons/md";
+import { MdDone, MdClear, MdAdd } from 'react-icons/md';
 
 import { useFetch } from '../../hooks/useFetch';
 
@@ -32,6 +33,7 @@ export interface ElementProps extends HTMLAttributes<HTMLButtonElement> {
 	flex?: number;
 	flexDirection?: string;
 	color?: string;
+	justifyContent?: string;
 }
 
 const Element = styled.div<ElementProps>`
@@ -40,11 +42,11 @@ const Element = styled.div<ElementProps>`
   flex-direction: ${(props) => props.flexDirection};
   background-color: ${(props) => props.color};
   align-items: center;
-  justify-content: center;
+  justify-content: ${(props) => props.justifyContent || 'center'}; ;
 `;
 
 const Photo = styled.div`
-display: flex;
+  display: flex;
   width: 80%;
   height: 80%;
   background-color: #d9d9d9;
@@ -52,23 +54,33 @@ display: flex;
   justify-content: center;
 `;
 
-const Carousel = styled.div`
-  width: 80%;
-  height: 50%;
-  background-color: yellow;
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  margin: 0;
 `;
+
+const rejected: any[] | [] = [];
+const approved: any[] | [] = [];
 
 export const StartScreen = () => {
 	const translations = useStartTranslations();
 
 	const [{ response, isLoading, error }, setFetch, refetch] = useFetch();
 
-	console.log('the responses and errors', response, isLoading, error)
+	const imageIsRejected = rejected?.some((value) => response?.id === value.id);
 
 	return (
 		<MainLayout>
 			<Container>
-				<Element flex={1}>
+				<Element
+					flex={1}
+					justifyContent='flex-start'
+					style={{ paddingLeft: '10%' }}
+				>
 					<Text color='#004CFC' fontSize={18} text-align='left'>
 						{translations.mainTitle.toUpperCase()}
 					</Text>
@@ -76,46 +88,54 @@ export const StartScreen = () => {
 
 				<Divider width={'100%'} />
 
-				<Element flex={2} flexDirection='column'>
+				<Element
+					flex={2}
+					flexDirection='column'
+					style={{ alignItems: 'flex-start', paddingLeft: '10%' }}
+				>
 					<Text color='#004CFC' fontSize={18}>
-						{translations.approvedImages.toUpperCase()}
+						{`${translations.approvedImages.toUpperCase()} (${approved ? approved.length : '0'
+							})`}
 					</Text>
 
-					<Carousel />
+					<ImageCarousel data={approved} />
 				</Element>
+
 				<Divider />
 
 				<Element flex={5}>
 					<Photo
 						onClick={() => {
-							setFetch(`https://api.unsplash.com/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`)
+							setFetch(
+								`https://api.unsplash.com/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`
+							);
 						}}
 					>
-						{isLoading ?
-							null
-							:
+						{isLoading ? null : response?.urls && !imageIsRejected ? (
+							<Image src={response?.urls?.thumb} />
+						) : (
 							<MdAdd style={{ color: '#808080', fontSize: 100 }} />
-						}
-
+						)}
 					</Photo>
-
 				</Element>
 
 				<Divider />
 
 				<Element flex={2}>
-					{response?.urls ? (
+					{response?.urls && !imageIsRejected ? (
 						<>
 							<Button
-								onClick={() => setFetch(`https://api.unsplash.com/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`)}
+								onClick={() =>
+									setFetch(
+										`https://api.unsplash.com/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`
+									)
+								}
 								background='grey'
 							>
 								<MdClear style={{ color: 'white', fontSize: 30 }} />
 							</Button>
 
-							<Button
-								onClick={() => console.log('cscxc')}
-								background='#004CFC'>
+							<Button onClick={() => console.log('click done')} background='#004CFC'>
 								<MdDone style={{ color: 'white', fontSize: 30 }} />
 							</Button>
 						</>
