@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 
 export interface DividerProps {
-    width?: string;
+  width?: string;
 }
 
 const defaultDividerProps: Partial<DividerProps> = {
-    width: '100%',
+  width: '100%',
 };
 
 const DividerStyled = styled.hr<DividerProps>`
@@ -18,3 +18,5 @@ const DividerStyled = styled.hr<DividerProps>`
 export const Divider: React.FC<DividerProps> = (props) => <DividerStyled {...props} />;
 
 DividerStyled.defaultProps = defaultDividerProps;
+
+export default DividerStyled;

@@ -11,7 +11,6 @@ const defaultButtonProps: Partial<ButtonProps> = {
   onClick: () => console.log('pressed')
 };
 
-
 const ButtonStyled = styled.button<ButtonProps>`
   background: ${(props) => props.background || 'white'};
   width: 200px;

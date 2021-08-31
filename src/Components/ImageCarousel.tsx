@@ -1,16 +1,10 @@
 import styled from 'styled-components';
 import React from 'react';
+import { useSelector } from 'react-redux';
 
-export interface ImageCarouselProps {
-  data?: { id: number; url: string }[] | [];
-  //this will change also that  can be [], as first value for redux
-}
+import { GlobalState } from '../reducers/imageReducer';
 
-const defaultButtonProps: Partial<ImageCarouselProps> = {
-  data: [{ id: 1, url: '' }],
-};
-
-const ImageCarouselStyled = styled.div<ImageCarouselProps>`
+const ImageCarouselStyled = styled.div`
   display: flex;
   width: 90%;
   height: 50%;
@@ -27,20 +21,28 @@ const Image = styled.img`
   overflow: hidden;
 `;
 
-export const ImageCarousel: React.FC<ImageCarouselProps> = (props) => (
-  <ImageCarouselStyled {...props}>
-    {props?.data?.map((image, index) => (
-      <React.Fragment key={image.id}>
-        <div
-          style={{ width: 50, height: 50, paddingLeft: index !== 0 ? 20 : 0 }}
-        >
-          <Image src={image.url} />
-        </div>
-      </React.Fragment>
-    ))}
-  </ImageCarouselStyled>
-);
+const ImageContainer = styled.div`
+  width: 50px;
+  height: 50px;
+`;
 
-ImageCarouselStyled.defaultProps = defaultButtonProps;
+export const ImageCarousel: React.FC = (props) => {
+
+  const imagesApproved = useSelector((state: GlobalState) => state.isImage.approved);
+
+  console.log('images approved', imagesApproved)
+
+  return (
+    <ImageCarouselStyled {...props}>
+      {imagesApproved?.map((image, index) => (
+        <React.Fragment key={image.id}>
+          <ImageContainer style={{ paddingLeft: index !== 0 ? 20 : 0 }}>
+            <Image src={image.url} />
+          </ImageContainer>
+        </React.Fragment>
+      ))}
+    </ImageCarouselStyled>
+  )
+};
 
 export default ImageCarouselStyled;

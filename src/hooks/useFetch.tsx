@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
 
-
-// Implementation code where T is the returned data shape
-// check what is T, me falta el refetch
-
 export const useFetch: any = () => {
     const [response, setResponse] = useState<any | null>(null);
     const [url, setUrl] = useState<string>('');
@@ -19,6 +15,8 @@ export const useFetch: any = () => {
     }
 
     const setFetch = (url: string, options: RequestInit) => {
+        console.log('useFetch', url, options)
+
         setUrl(url)
         setOptions(options)
     }
