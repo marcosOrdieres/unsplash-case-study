@@ -1,11 +1,11 @@
 import { combineReducers, createStore } from 'redux';
-import imageReducer from '../reducers/imageReducer';
+import imageReducer, { GlobalState } from '../reducers/imageReducer';
 
 const appReducer = combineReducers({
     isImage: imageReducer.isImage
 });
 
-const saveToLocalStorage = (state: any) => {
+const saveToLocalStorage = (state: GlobalState) => {
     try {
         const convertedStateToLocalstorage = JSON.stringify(state);
         localStorage.setItem("applicationPersistantState", convertedStateToLocalstorage);
