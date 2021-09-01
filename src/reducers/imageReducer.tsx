@@ -1,4 +1,3 @@
-
 type ImageState = {
     approved: Payload[];
     rejected: Payload[];

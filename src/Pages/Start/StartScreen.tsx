@@ -24,12 +24,10 @@ const Image = styled.img`
 export const StartScreen = () => {
 	const translations = useStartTranslations();
 
-	const storeData = useSelector((state: GlobalState) => state);
-
 	const approved = useSelector((state: GlobalState) => state.isImage.approved);
 	const rejected = useSelector((state: GlobalState) => state.isImage.rejected);
 
-	const [{ response, isLoading, error }, setFetch, refetch, reset] = useFetch();
+	const [{ response, isLoading, error }, setFetch, refetch, resetFetchData] = useFetch();
 
 	const dispatch = useDispatch();
 
@@ -38,11 +36,8 @@ export const StartScreen = () => {
 	);
 
 	if (imageIsRejected) {
-		reset()
+		resetFetchData()
 	}
-
-	console.log('the new id: ', response?.id)
-	console.log('imageIsRejected', imageIsRejected)
 
 	return (
 		<MainLayout>
@@ -107,12 +102,11 @@ export const StartScreen = () => {
 										rejected: { id: response?.id, url: response?.urls?.thumb },
 									});
 
-									await reset()
+									await resetFetchData()
 
 									await setFetch(
 										`${process.env.REACT_APP_UNSPLASH_URL}/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`
 									);
-									console.log('rejected images', storeData)
 								}}
 								background='grey'
 							>
@@ -126,8 +120,7 @@ export const StartScreen = () => {
 										approved: { id: response?.id, url: response?.urls?.thumb },
 									});
 
-									await reset()
-									console.log('approved images', storeData)
+									await resetFetchData()
 								}}
 								background='#004CFC'
 							>

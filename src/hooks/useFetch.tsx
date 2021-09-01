@@ -12,7 +12,7 @@ export const useFetch: any = () => {
         setUrl(url)
     }
 
-    const reset = () => {
+    const resetFetchData = () => {
         setResponse(null)
         setUrl('')
         setIsLoading(false)
@@ -40,5 +40,5 @@ export const useFetch: any = () => {
         if (url !== '') fetchData();
     }, [url, options]);
 
-    return [{ response, isLoading, error }, setFetch, refetch, reset];
+    return [{ response, isLoading, error }, setFetch, refetch, resetFetchData];
 };
