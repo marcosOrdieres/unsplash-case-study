@@ -17,12 +17,9 @@ import Button from '../../Components/Button';
 import Text from '../../Components/Text';
 
 const Image = styled.img`
-  width: 100%;
-  height: 100%;
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-  margin: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
 `;
 
 export const StartScreen = () => {
@@ -34,15 +31,11 @@ export const StartScreen = () => {
 	const [{ response, isLoading, error }, setFetch, refetch] = useFetch();
 
 
-	console.log('en main response: ', response)
-
 	const dispatch = useDispatch();
 
 	const imageIsRejected = rejected?.some(
 		(value: any) => response?.id === value.id
 	);
-
-	console.log('imageRejj', imageIsRejected)
 
 	return (
 		<MainLayout>

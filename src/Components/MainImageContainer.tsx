@@ -11,8 +11,8 @@ const defaultMainImageContainerProps: Partial<MainImageContainerProps> = {
 
 const MainImageContainerStyled = styled.div<MainImageContainerProps>`
   display: flex;
-  width: 80%;
-  height: 80%;
+  width:250px;
+  height: 250px;
   background-color: ${(props) => props.backgroundColor || 'white'};
   align-items: center;
   justify-content: center;
