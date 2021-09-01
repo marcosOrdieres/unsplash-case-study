@@ -4,8 +4,6 @@ export const useFetch: any = () => {
     const [response, setResponse] = useState<any | null>(null);
     const [url, setUrl] = useState<string>('');
     const [options, setOptions] = useState<RequestInit>({});
-
-    //change this
     const [error, setError] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -15,8 +13,6 @@ export const useFetch: any = () => {
     }
 
     const setFetch = (url: string, options: RequestInit) => {
-        console.log('useFetch', url, options)
-
         setUrl(url)
         setOptions(options)
     }
@@ -37,6 +33,8 @@ export const useFetch: any = () => {
         };
         if (url !== '') fetchData();
     }, [url, options]);
+
+    console.log('vamos a ver si retorna nuevo response', response)
 
     return [{ response, isLoading, error }, setFetch, refetch];
 

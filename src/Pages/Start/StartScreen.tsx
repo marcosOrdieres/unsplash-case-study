@@ -34,13 +34,15 @@ export const StartScreen = () => {
 	const [{ response, isLoading, error }, setFetch, refetch] = useFetch();
 
 
-	console.log(response, isLoading, error)
+	console.log('en main response: ', response)
 
 	const dispatch = useDispatch();
 
 	const imageIsRejected = rejected?.some(
 		(value: any) => response?.id === value.id
 	);
+
+	console.log('imageRejj', imageIsRejected)
 
 	return (
 		<MainLayout>

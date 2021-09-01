@@ -30,8 +30,6 @@ export const ImageCarousel: React.FC = (props) => {
 
   const imagesApproved = useSelector((state: GlobalState) => state.isImage.approved);
 
-  console.log('images approved', imagesApproved)
-
   return (
     <ImageCarouselStyled {...props}>
       {imagesApproved?.map((image, index) => (
