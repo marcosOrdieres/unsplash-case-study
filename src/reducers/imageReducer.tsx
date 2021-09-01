@@ -1,10 +1,9 @@
-
 type ImageState = {
     approved: Payload[];
     rejected: Payload[];
 }
 
-type Payload = {
+export type Payload = {
     id: number;
     url: string
 }

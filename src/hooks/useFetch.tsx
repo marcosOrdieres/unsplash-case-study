@@ -4,8 +4,6 @@ export const useFetch: any = () => {
     const [response, setResponse] = useState<any | null>(null);
     const [url, setUrl] = useState<string>('');
     const [options, setOptions] = useState<RequestInit>({});
-
-    //change this
     const [error, setError] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -14,9 +12,14 @@ export const useFetch: any = () => {
         setUrl(url)
     }
 
-    const setFetch = (url: string, options: RequestInit) => {
-        console.log('useFetch', url, options)
+    const resetFetchData = () => {
+        setResponse(null)
+        setUrl('')
+        setIsLoading(false)
+        setError(null)
+    }
 
+    const setFetch = (url: string, options: RequestInit) => {
         setUrl(url)
         setOptions(options)
     }
@@ -24,7 +27,6 @@ export const useFetch: any = () => {
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
             setIsLoading(true);
-
             try {
                 const res = await fetch(url, options);
                 const json = await res.json();
@@ -38,6 +40,5 @@ export const useFetch: any = () => {
         if (url !== '') fetchData();
     }, [url, options]);
 
-    return [{ response, isLoading, error }, setFetch, refetch];
-
+    return [{ response, isLoading, error }, setFetch, refetch, resetFetchData];
 };

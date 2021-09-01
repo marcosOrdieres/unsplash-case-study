@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useStartTranslations } from './StartScreen.translations';
 import styled from 'styled-components';
 import { MdDone, MdClear, MdAdd } from 'react-icons/md';
-import { useDispatch, useSelector } from 'react-redux';
+import { Skeleton } from '@material-ui/lab';
 
-import { GlobalState } from '../../reducers/imageReducer';
+import { useDispatch, useSelector } from 'react-redux';
+import { GlobalState, Payload } from '../../reducers/imageReducer';
 import { useFetch } from '../../hooks/useFetch';
 
 import { ImageCarousel } from '../../Components/ImageCarousel';
@@ -19,10 +20,7 @@ import Text from '../../Components/Text';
 const Image = styled.img`
   width: 100%;
   height: 100%;
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-  margin: 0;
+  object-fit: cover;
 `;
 
 export const StartScreen = () => {
@@ -31,16 +29,18 @@ export const StartScreen = () => {
 	const approved = useSelector((state: GlobalState) => state.isImage.approved);
 	const rejected = useSelector((state: GlobalState) => state.isImage.rejected);
 
-	const [{ response, isLoading, error }, setFetch, refetch] = useFetch();
-
-
-	console.log(response, isLoading, error)
+	const [{ response, isLoading, error }, setFetch, refetch, resetFetchData] =
+		useFetch();
 
 	const dispatch = useDispatch();
 
 	const imageIsRejected = rejected?.some(
-		(value: any) => response?.id === value.id
+		(value: Payload) => response?.id === value.id
 	);
+
+	if (imageIsRejected) {
+		resetFetchData();
+	}
 
 	return (
 		<MainLayout>
@@ -71,14 +71,16 @@ export const StartScreen = () => {
 
 				<Section flex={5}>
 					<MainImageContainer
-						backgroundColor='#d9d9d9'
-						onClick={async () => {
-							await setFetch(
+						backgroundColor={!isLoading ? '#d9d9d9' : 'null'}
+						onClick={() => {
+							setFetch(
 								`${process.env.REACT_APP_UNSPLASH_URL}/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`
 							);
 						}}
 					>
-						{isLoading ? null : response?.urls && !imageIsRejected ? (
+						{isLoading ? (
+							<Skeleton variant='rect' width={250} height={250} />
+						) : response?.urls && !imageIsRejected ? (
 							<Image src={response?.urls?.thumb} />
 						) : (
 							<MdAdd style={{ color: '#808080', fontSize: 100 }} />
@@ -104,6 +106,8 @@ export const StartScreen = () => {
 										rejected: { id: response?.id, url: response?.urls?.thumb },
 									});
 
+									await resetFetchData();
+
 									await setFetch(
 										`${process.env.REACT_APP_UNSPLASH_URL}/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`
 									);
@@ -114,11 +118,13 @@ export const StartScreen = () => {
 							</Button>
 
 							<Button
-								onClick={() => {
+								onClick={async () => {
 									dispatch({
 										type: 'APPROVE_IMAGE',
 										approved: { id: response?.id, url: response?.urls?.thumb },
 									});
+
+									await resetFetchData();
 								}}
 								background='#004CFC'
 							>
