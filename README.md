@@ -1,4 +1,4 @@
-# kickid-pwa
+# unsplash-case-study
 
 ## Prerequisites
 
