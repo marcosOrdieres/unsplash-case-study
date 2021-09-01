@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useStartTranslations } from './StartScreen.translations';
 import styled from 'styled-components';
 import { MdDone, MdClear, MdAdd } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
-
 import { GlobalState } from '../../reducers/imageReducer';
 import { useFetch } from '../../hooks/useFetch';
 
@@ -25,17 +24,25 @@ const Image = styled.img`
 export const StartScreen = () => {
 	const translations = useStartTranslations();
 
+	const storeData = useSelector((state: GlobalState) => state);
+
 	const approved = useSelector((state: GlobalState) => state.isImage.approved);
 	const rejected = useSelector((state: GlobalState) => state.isImage.rejected);
 
-	const [{ response, isLoading, error }, setFetch, refetch] = useFetch();
-
+	const [{ response, isLoading, error }, setFetch, refetch, reset] = useFetch();
 
 	const dispatch = useDispatch();
 
 	const imageIsRejected = rejected?.some(
 		(value: any) => response?.id === value.id
 	);
+
+	if (imageIsRejected) {
+		reset()
+	}
+
+	console.log('the new id: ', response?.id)
+	console.log('imageIsRejected', imageIsRejected)
 
 	return (
 		<MainLayout>
@@ -60,6 +67,7 @@ export const StartScreen = () => {
 					</Text>
 
 					<ImageCarousel />
+
 				</Section>
 
 				<Divider />
@@ -67,8 +75,8 @@ export const StartScreen = () => {
 				<Section flex={5}>
 					<MainImageContainer
 						backgroundColor='#d9d9d9'
-						onClick={async () => {
-							await setFetch(
+						onClick={() => {
+							setFetch(
 								`${process.env.REACT_APP_UNSPLASH_URL}/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`
 							);
 						}}
@@ -99,9 +107,12 @@ export const StartScreen = () => {
 										rejected: { id: response?.id, url: response?.urls?.thumb },
 									});
 
+									await reset()
+
 									await setFetch(
 										`${process.env.REACT_APP_UNSPLASH_URL}/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`
 									);
+									console.log('rejected images', storeData)
 								}}
 								background='grey'
 							>
@@ -109,11 +120,14 @@ export const StartScreen = () => {
 							</Button>
 
 							<Button
-								onClick={() => {
+								onClick={async () => {
 									dispatch({
 										type: 'APPROVE_IMAGE',
 										approved: { id: response?.id, url: response?.urls?.thumb },
 									});
+
+									await reset()
+									console.log('approved images', storeData)
 								}}
 								background='#004CFC'
 							>

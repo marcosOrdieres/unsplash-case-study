@@ -12,6 +12,13 @@ export const useFetch: any = () => {
         setUrl(url)
     }
 
+    const reset = () => {
+        setResponse(null)
+        setUrl('')
+        setIsLoading(false)
+        setError(null)
+    }
+
     const setFetch = (url: string, options: RequestInit) => {
         setUrl(url)
         setOptions(options)
@@ -20,7 +27,6 @@ export const useFetch: any = () => {
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
             setIsLoading(true);
-
             try {
                 const res = await fetch(url, options);
                 const json = await res.json();
@@ -34,8 +40,5 @@ export const useFetch: any = () => {
         if (url !== '') fetchData();
     }, [url, options]);
 
-    console.log('vamos a ver si retorna nuevo response', response)
-
-    return [{ response, isLoading, error }, setFetch, refetch];
-
+    return [{ response, isLoading, error }, setFetch, refetch, reset];
 };
