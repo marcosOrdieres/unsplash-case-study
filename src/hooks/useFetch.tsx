@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 export const useFetch: any = () => {
     const [response, setResponse] = useState<any | null>(null);
@@ -7,22 +7,17 @@ export const useFetch: any = () => {
     const [error, setError] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const refetch = () => {
-        setResponse(null)
-        setUrl(url)
-    }
-
     const resetFetchData = () => {
-        setResponse(null)
-        setUrl('')
-        setIsLoading(false)
-        setError(null)
-    }
+        setResponse(null);
+        setUrl('');
+        setIsLoading(false);
+        setError(null);
+    };
 
     const setFetch = (url: string, options: RequestInit) => {
-        setUrl(url)
-        setOptions(options)
-    }
+        setUrl(url);
+        setOptions(options);
+    };
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
@@ -40,5 +35,5 @@ export const useFetch: any = () => {
         if (url !== '') fetchData();
     }, [url, options]);
 
-    return [{ response, isLoading, error }, setFetch, refetch, resetFetchData];
+    return { response, isLoading, error, setFetch, resetFetchData };
 };
