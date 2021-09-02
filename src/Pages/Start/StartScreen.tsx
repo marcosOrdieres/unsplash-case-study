@@ -15,7 +15,7 @@ import Divider from '../../Components/Divider';
 import MainImageContainer from '../../Components/MainImageContainer';
 import Button from '../../Components/Button';
 import Text from '../../Components/Text';
-import ImageCarousel from '../../Components/ImageCarousel';
+import { ImageCarousel } from '../../Components/ImageCarousel';
 
 const Image = styled.img`
   width: 100%;
@@ -29,7 +29,7 @@ export const StartScreen = () => {
 	const approved = useSelector((state: GlobalState) => state.isImage.approved);
 	const rejected = useSelector((state: GlobalState) => state.isImage.rejected);
 
-	const { response, isLoading, error, setFetch, refetch, resetFetchData } =
+	const { response, isLoading, error, setFetch, resetFetchData } =
 		useFetch();
 
 	const dispatch = useDispatch();

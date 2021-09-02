@@ -40,6 +40,7 @@ const isImageReducer = (state: ImageState = initialState, action: Action) => {
     }
 };
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
     isImage: isImageReducer,
 };

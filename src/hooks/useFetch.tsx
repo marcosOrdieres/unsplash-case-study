@@ -7,11 +7,6 @@ export const useFetch: any = () => {
     const [error, setError] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const refetch = () => {
-        setResponse(null);
-        setUrl(url);
-    };
-
     const resetFetchData = () => {
         setResponse(null);
         setUrl('');
@@ -40,5 +35,5 @@ export const useFetch: any = () => {
         if (url !== '') fetchData();
     }, [url, options]);
 
-    return { response, isLoading, error, setFetch, refetch, resetFetchData };
+    return { response, isLoading, error, setFetch, resetFetchData };
 };
