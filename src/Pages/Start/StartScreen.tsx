@@ -42,6 +42,12 @@ export const StartScreen = () => {
 		resetFetchData();
 	}
 
+	if (error) {
+		setTimeout(() => {
+			resetFetchData();
+		}, 2000);
+	}
+
 	return (
 		<MainLayout>
 			<Container>

@@ -1,6 +1,4 @@
-//import * as types from '../actions/posts/getPostsReduxAction';
-
-import imageReducer, { initialState } from '../../reducers/imageReducer';
+import imageReducer, { initialState } from "../../reducers/imageReducer";
 
 describe('imageReducer reducer', () => {
     it('should return the initial state', () => {
