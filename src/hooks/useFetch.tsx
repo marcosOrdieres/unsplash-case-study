@@ -26,6 +26,10 @@ export const useFetch: any = () => {
                 const res = await fetch(url, options);
                 const json = await res.json();
 
+                if (json.errors) {
+                    throw new Error(json.errors[0].toString())
+                }
+
                 setResponse(json);
                 setIsLoading(false);
             } catch (error) {
