@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useStartTranslations } from './StartScreen.translations';
 import styled from 'styled-components';
 import { MdDone, MdClear, MdAdd } from 'react-icons/md';
@@ -24,126 +24,131 @@ const Image = styled.img`
 `;
 
 export const StartScreen = () => {
-	const translations = useStartTranslations();
+  const translations = useStartTranslations();
 
-	const approved = useSelector((state: GlobalState) => state.isImage.approved);
-	const rejected = useSelector((state: GlobalState) => state.isImage.rejected);
+  const approved = useSelector((state: GlobalState) => state.isImage.approved);
+  const rejected = useSelector((state: GlobalState) => state.isImage.rejected);
 
-	const { response, isLoading, error, setFetch, resetFetchData } =
-		useFetch();
+  const { response, isLoading, error, setFetch, resetFetchData } =
+    useFetch();
 
-	const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-	const imageIsRejected = rejected?.some(
-		(value: Payload) => response?.id === value.id
-	);
+  const imageIsRejected = rejected?.some(
+    (value: Payload) => response?.id === value.id
+  );
 
-	if (imageIsRejected) {
-		resetFetchData();
-	}
+  useEffect(() => {
+    if (imageIsRejected) {
+      resetFetchData();
+    }
+  })
 
-	if (error) {
-		setTimeout(() => {
-			resetFetchData();
-		}, 2000);
-	}
+  useEffect(() => {
+    if (error) {
+      setTimeout(() => {
+        resetFetchData();
+      }, 2000);
+    }
+  })
 
-	return (
-		<MainLayout>
-			<Container>
-				<Section flex={1} justifyContent='flex-start' paddingLeft='10%'>
-					<Text color='#004CFC' fontSize={18} text-align='left'>
-						{translations.mainTitle.toUpperCase()}
-					</Text>
-				</Section>
+  return (
+    <MainLayout>
+      <Container>
+        <Section flex={1} justifyContent='flex-start' paddingLeft='10%'>
+          <Text color='#004CFC' fontSize={18} text-align='left'>
+            {translations.mainTitle.toUpperCase()}
+          </Text>
+        </Section>
 
-				<Divider width={'100%'} />
+        <Divider width={'100%'} />
 
-				<Section
-					flex={2}
-					flexDirection='column'
-					paddingLeft='10%'
-					alignItems='flex-start'
-				>
-					<Text color='#004CFC' fontSize={18}>
-						{`${translations.approvedImages.toUpperCase()} (${approved ? approved.length : '0'
-							})`}
-					</Text>
+        <Section
+          flex={2}
+          flexDirection='column'
+          paddingLeft='10%'
+          alignItems='flex-start'
+        >
+          <Text color='#004CFC' fontSize={18}>
+            {`${translations.approvedImages.toUpperCase()} (${approved ? approved.length : '0'
+              })`}
+          </Text>
 
-					<ImageCarousel />
-				</Section>
+          <ImageCarousel />
+        </Section>
 
-				<Divider />
+        <Divider />
 
-				<Section flex={5}>
-					<MainImageContainer
-						backgroundColor={!isLoading ? '#d9d9d9' : 'null'}
-						onClick={() => {
-							setFetch(
-								`${process.env.REACT_APP_UNSPLASH_URL}/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`
-							);
-						}}
-					>
-						{isLoading ? (
-							<Skeleton variant='rect' width={250} height={250} />
-						) : response?.urls && !imageIsRejected ? (
-							<Image src={response?.urls?.thumb} />
-						) : (
-							<MdAdd style={{ color: '#808080', fontSize: 100 }} />
-						)}
+        <Section flex={5}>
+          <MainImageContainer
+            backgroundColor={!isLoading ? '#d9d9d9' : 'null'}
+            onClick={() => {
+              setFetch(
+                `${process.env.REACT_APP_UNSPLASH_URL}/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`
+              );
+            }}
+          >
+            {isLoading ? (
+              <Skeleton variant='rect' width={250} height={250} />
+            ) : response?.urls && !imageIsRejected ? (
+              <Image src={response?.urls?.thumb} />
+            ) : (
+              <MdAdd style={{ color: '#808080', fontSize: 100 }} />
+            )}
 
-						{error && (
-							<Text color='red' fontSize={18}>
-								{error?.toString()}
-							</Text>
-						)}
-					</MainImageContainer>
-				</Section>
+            {error && (
+              <Text color='red' fontSize={18}>
+                {error?.toString()}
+              </Text>
+            )}
+          </MainImageContainer>
+        </Section>
 
-				<Divider />
+        <Divider />
 
-				<Section flex={2}>
-					{response?.urls && !imageIsRejected ? (
-						<>
-							<Button
-								onClick={async () => {
-									dispatch({
-										type: 'REJECT_IMAGE',
-										rejected: { id: response?.id, url: response?.urls?.thumb },
-									});
+        <Section flex={2}>
+          {response?.urls && !imageIsRejected ? (
+            <>
+              <Button
+                onClick={async () => {
+                  dispatch({
+                    type: 'REJECT_IMAGE',
+                    rejected: { id: response?.id, url: response?.urls?.thumb },
+                  });
 
-									await resetFetchData();
+                  await resetFetchData();
 
-									await setFetch(
-										`${process.env.REACT_APP_UNSPLASH_URL}/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`
-									);
-								}}
-								background='grey'
-							>
-								<MdClear style={{ color: 'white', fontSize: 30 }} />
-							</Button>
+                  setFetch(
+                    `${process.env.REACT_APP_UNSPLASH_URL}/photos/random/?client_id=${process.env.REACT_APP_UNSPLASH_ACCESS_TOKEN}`
+                  );
+                }}
+                background='grey'
+              >
+                <MdClear style={{ color: 'white', fontSize: 30 }} />
+              </Button>
 
-							<Button
-								onClick={async () => {
-									dispatch({
-										type: 'APPROVE_IMAGE',
-										approved: { id: response?.id, url: response?.urls?.thumb },
-									});
+              <Button
+                onClick={async () => {
+                  dispatch({
+                    type: 'APPROVE_IMAGE',
+                    approved: { id: response?.id, url: response?.urls?.thumb },
+                  });
 
-									await resetFetchData();
-								}}
-								background='#004CFC'
-							>
-								<MdDone style={{ color: 'white', fontSize: 30 }} />
-							</Button>
-						</>
-					) : (
-						<Text color='grey' fontSize={12}>
-							{translations.clickPlus}
-						</Text>
-					)}
-				</Section>
-			</Container>
-		</MainLayout>
-	);
+                  resetFetchData();
+                }}
+                background='#004CFC'
+              >
+                <MdDone style={{ color: 'white', fontSize: 30 }} />
+              </Button>
+            </>
+          ) : (
+            <Text color='grey' fontSize={12}>
+              {translations.clickPlus}
+            </Text>
+          )}
+        </Section>
+
+      </Container>
+    </MainLayout>
+  );
 };
